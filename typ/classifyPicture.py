@@ -4,11 +4,10 @@ import time
 import cv2
 import numpy as np
 from sklearn.decomposition import TruncatedSVD
-# from sklearn import manifold
 from skimage.feature import local_binary_pattern
 
-from Tree import DecisionTree
-import debug
+from .Tree import DecisionTree
+from  . import debug
 
 class classifyPicture:
     def __init__(self) -> None:

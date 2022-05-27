@@ -1,5 +1,5 @@
 import numpy as np
-import debug
+from . import debug
 
 class Node:
     def __init__(self, value):
