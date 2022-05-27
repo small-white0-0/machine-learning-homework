@@ -162,10 +162,3 @@ class classifyPicture:
         print("训练样本的：")
         self.predict(photos_train_str,types_train_str, display, only_rate)
 
-
-
-
-
-
-T = classifyPicture()
-T.simple_start('/home/tt/machine_test')
