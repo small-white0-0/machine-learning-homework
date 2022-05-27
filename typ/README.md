@@ -1,4 +1,7 @@
 # 基本使用
+## 依赖安装
+依赖写在了requirements.txt, 可以使用python工具安装
+
 ## 快速开始
 创建一个 classifyPicture 的对象。传递给给对象的 simple_start 方法 一个目录字符串——该目录下仅仅能够有airplane,forest两个文件夹，
 该方法会自动读取目录下的图片，并自动均分样本分别用来进行训练和测试，并输出结果。
@@ -13,7 +16,8 @@ simple_start 可选参数：
 ```python
 T = classifyPicture()
 T.simple_start('/home/tt/machine_test')
-
+# 如果在Windows下,注意用反斜杠
+T.simple_start('D:/machine_test')
 ```
 ## 正常使用
 
@@ -24,7 +28,7 @@ T.simple_start('/home/tt/machine_test')
 ```python
 # 获取图片地址数组
 photos, types = self.get_photos_str(dir)
-# 将图片对半分
+# 将数组对半分
 photos_train_str, photos_test_str = self.list_split(photos)
 types_train_str, types_test_str = self.list_split(types)
 
