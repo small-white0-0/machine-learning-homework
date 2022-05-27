@@ -1,5 +1,5 @@
 import numpy as np
-DEBUG = False
+import debug
 
 class Node:
     def __init__(self, value):
@@ -72,9 +72,8 @@ class DecisionTree:
         targets = self.__get_targets(D)
         t,freqs = self.__get_targets_freqs(D)
         ED = 1 - (np.sum(freqs**2)/(len(targets)**2))
-        if depth >= 10 or ED < 0.01:
-            if DEBUG:
-                print("depth:",depth)
+        if depth >= 10 or ED < 0.000001:
+            debug.debug_print("叶子节点所在深度:",depth)
             return False
         else:
             return True
@@ -105,11 +104,14 @@ class DecisionTree:
 
         # 遍历求 G 最大的 特征值和
         max_G = None
-        for col in range(target_index):
-            column = D[:, col]
+        for col_index in range(target_index):
+            if col_index in self.used_col:
+                continue
+
+            column = D[:, col_index]
             values = np.unique(column)
             repeat = []
-            # 第 col 特征值 中的类型作为分类依据
+            # 第 col 特征值 中的类型作为分类依据计算不纯度
             for value in values:
 
                 if value in repeat:
@@ -143,15 +145,17 @@ class DecisionTree:
                     max_G = G
                     best_DL = part_DL
                     best_DR = part_DR
-                    best_split[0] = col
+                    best_split[0] = col_index
                     best_split[1] = value
 
+        self.used_col.append(best_split[0])
         return Split(best_split), best_DL, best_DR
    
 
     # D的最后一列应是每个样本的类型
     def train(self, D):
         if D.size > 0:
+            self.used_col = []
             self.DTroot = self.__train_R(D, 0)
         else:
             print("训练样本为0,异常退出")
