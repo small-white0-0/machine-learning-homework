@@ -40,3 +40,5 @@ self.predict(photos_test_str, types_test_str, display, only_rate)
 print("训练样本的：")
 self.predict(photos_train_str,types_train_str, display, only_rate)
 ```
+## debug信息展示
+在 typ/debug中 有一个全局变量 DEBUG ，如果为True, 则会输出额外的关于时间和树深度的信息。 修改为 False ，则不会显示。

@@ -126,9 +126,9 @@ class classifyPicture:
         if self.tree == None:
             print("没有进行训练")
             return None
-        read_time = time.perf_counter()
+        debug.debug_time_start()
         photos, types, _ = self.__read_photos(photos_str, types_str)
-        print(f'read time:{time.perf_counter() - read_time:.8f}s')
+        debug.debug_print_time("图片读取和处理时间")
         test_set  = np.append(photos, types, axis=1)
         re = self.tree.predict(test_set)
 

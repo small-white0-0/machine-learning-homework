@@ -1,6 +1,6 @@
 import time
 
-DEBUG = True
+DEBUG = False
 t_locker = False
 t = None
 def debug_time_start():
