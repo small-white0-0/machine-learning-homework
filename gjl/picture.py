@@ -17,16 +17,15 @@ class photos_processing:
         self.only_color = only_color
 
     @staticmethod
-    def list_split(lst, n=2):
+    def list_split(lst, n=4):
         """
         :lst ,一个 字符串 数组
-        :n ,整数， 默认为2 表示大约 1/n 的 lst 分割到第一个返回值， 剩余分割到第二个返回值
+        :n ,整数， 默认为4 表示大约 (n-1)/n 的 lst 分割到第一个返回值， 剩余分割到第二个返回值
         返回两个数组
         """
         flag = 0
         train = []
         test = []
-        n = 4
         for i in lst:
             if flag % n != 0:
                 train.append(i)
