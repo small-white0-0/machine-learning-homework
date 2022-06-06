@@ -215,8 +215,6 @@ class DecisionTree:
         if self.rate == None:
             return cur.value
         else:
-            if not math.isclose(cur.value,0) and not math.isclose(cur.value, 1):
-                print(cur.value)
             if cur.value >= self.rate:
                 return self.ids[0]
             else:
