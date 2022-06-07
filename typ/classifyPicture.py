@@ -22,7 +22,7 @@ class classify_picture:
         """
         return self.tags[index]
 
-    def train(self, photos_str, types_str, size=50, only_color=True, probability=None):
+    def train(self, photos_str, types_str, size=50, only_color=True):
         """
         训练决策树，先从参数中读取图片，再进行决策树训练
 
@@ -42,7 +42,7 @@ class classify_picture:
         debug.debug_print_time("read time")
 
         train_set = np.append(photos, types, axis=1)
-        self.tree = DecisionTree(rate=probability)
+        self.tree = DecisionTree()
         debug.debug_time_start()
         self.tree.train(train_set)
         debug.debug_print_time("二叉树训练用时")
@@ -80,7 +80,7 @@ class classify_picture:
 
         return re
 
-    def simple_start(self, dir, display=True, only_rate=True, probability=None):
+    def simple_start(self, dir, display=True, only_rate=True):
         """
         简单测试用的函数， 接受目录，读取目录中的图片文件，并用 50%样本进行训练， 用50% 样本进行测试
 
@@ -93,7 +93,7 @@ class classify_picture:
             photos)
         types_train_str, types_test_str = photos_processing.list_split(types)
 
-        self.train(photos_train_str, types_train_str, only_color=False, probability=probability)
+        self.train(photos_train_str, types_train_str, only_color=False)
 
         print("测试样本的：")
         self.predict(photos_test_str, types_test_str,

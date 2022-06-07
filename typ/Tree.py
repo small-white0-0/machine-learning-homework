@@ -1,7 +1,5 @@
-import math
 import numpy as np
 from . import debug
-
 
 class Node:
     def __init__(self, value):
@@ -14,7 +12,7 @@ class Node:
 class Split:
     def __init__(self, best_split):
         self.best_split = best_split
-
+    
     def split(self, s):
         if s[self.best_split[0]] <= self.best_split[1]:
             return "left"
@@ -23,8 +21,9 @@ class Split:
 
 
 class DecisionTree:
-    def __init__(self, rate=None) -> None:
-        self.rate = rate
+    def __init__(self) -> None:
+        pass
+
 
     def __get_targets(self, D):
         """
@@ -37,7 +36,7 @@ class DecisionTree:
             return np.array(temp)
         else:
             targets_index = len(D[0]) - 1
-            targets = D[:, targets_index]
+            targets = D[:,targets_index]
             return targets
 
     def __get_targets_freqs(self, D):
@@ -48,38 +47,22 @@ class DecisionTree:
         """
         targets = self.__get_targets(D)
         types, freqs = np.unique(targets, return_counts=True)
-        return types, freqs
-
-    def __calculate_value_not_rate(self, D):
-        # 样本D 为空， 返回None
-        if D.size == 0:
-            return None
-
-        types, freqs = self.__get_targets_freqs(D)
-        max = freqs.max()
-        leafNode = None
-        for (i, j) in zip(freqs, types):
-            if i == max:
-                leafNode = Node(j)
-                break
-        return leafNode
+        return types,freqs
 
     def __calculate_value(self, D):
         # 样本D 为空， 返回None
         if D.size == 0:
             return None
 
-        if self.rate == None:
-            return self.__calculate_value_not_rate(D)
-
-        types, freqs = self.__get_targets_freqs(D)
-        if types[0] == self.ids[0]:
-            first_id_count = freqs[0]
-        else:
-            first_id_count = 0
-
-        leafNode = Node(first_id_count/np.sum(freqs))
+        types,freqs = self.__get_targets_freqs(D)
+        max = freqs.max()
+        leafNode = None
+        for (i,j)in zip(freqs,types):
+            if i == max:
+                leafNode = Node(j)
+                break
         return leafNode
+
 
     def __is_divisible(self, D, depth):
         # 没有样本的，不能再分了。
@@ -87,13 +70,14 @@ class DecisionTree:
             return False
 
         targets = self.__get_targets(D)
-        t, freqs = self.__get_targets_freqs(D)
+        t,freqs = self.__get_targets_freqs(D)
         ED = 1 - (np.sum(freqs**2)/(len(targets)**2))
         if depth >= 10 or ED < 0.000001:
-            debug.debug_print("叶子节点所在深度:", depth)
+            debug.debug_print("叶子节点所在深度:",depth)
             return False
         else:
             return True
+
 
     def __get_G(self, DL, DR):
         # 由于DL, DR可能有一个为空，故需要判断
@@ -105,9 +89,10 @@ class DecisionTree:
         if DR.size > 0:
             NR = len(DR)
             types, freqsR = self.__get_targets_freqs(DR)
-
+            
             G += np.sum(freqsR**2)/NR
         return G
+
 
     def __find_best_split(self, D):
 
@@ -136,12 +121,12 @@ class DecisionTree:
 
                 part_DL = np.array([])
                 part_DR = np.array([])
-                LS, RS = False, False
-                # 根据是否 type 类型 ，进行分类
+                LS,RS = False,False
+                #根据是否 type 类型 ，进行分类
                 for i in range(len(column)):
                     if column[i] <= value:
                         if not LS:
-                            LS = True
+                            LS=True
                             part_DL = D[i].copy()
                         else:
                             part_DL = np.row_stack((part_DL, D[i]))
@@ -154,7 +139,7 @@ class DecisionTree:
 
                 # 计算G
                 G = self.__get_G(part_DL, part_DR)
-
+                
                 # 由于最后只需要找所有特征值中G最大的，直接只记录总的最大的就可以了。
                 if max_G == None or max_G < G:
                     max_G = G
@@ -165,24 +150,17 @@ class DecisionTree:
 
         self.used_col.append(best_split[0])
         return Split(best_split), best_DL, best_DR
+   
 
     # D的最后一列应是每个样本的类型
-
     def train(self, D):
         if D.size > 0:
-            types, _ = self.__get_targets_freqs(D)
-
-            if len(types) != 2 and self.rate != None:
-                print("仅能接受仅仅具有两种类型的分类")
-                exit(1)
-            elif self.rate != None:
-                self.ids = types.tolist()
-
             self.used_col = []
             self.DTroot = self.__train_R(D, 0)
         else:
             print("训练样本为0,异常退出")
             exit(1)
+
 
     def __train_R(self, D, depth):
         if not self.__is_divisible(D, depth):
@@ -200,6 +178,7 @@ class DecisionTree:
 
             return node
 
+
     def __predictOne(self, s):
         cur = self.DTroot
         while True:
@@ -212,18 +191,14 @@ class DecisionTree:
                     cur = cur.left
                 else:
                     cur = cur.right
-        if self.rate == None:
-            return cur.value
-        else:
-            if cur.value >= self.rate:
-                return self.ids[0]
-            else:
-                return self.ids[1]
+        
+        return cur.value
+
 
     def predict(self, D):
         re = []
         for sample in D:
             re.append(self.__predictOne(sample))
-
+        
         re = np.array(re)
         return re
